@@ -550,7 +550,7 @@ let highlightedBoxes = [];
     await musicSheet.load("./static/Minuet_in_G_Major.musicxml");
     musicSheet.render();
 })();
-window.nextBox = function nextBox1() {
+function nextBox() {
     let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
     let lastMeasureNumber = thisMeasureList[thisMeasureList.length - 1][0].MeasureNumber;
     currentBox += 1;
@@ -565,8 +565,8 @@ window.nextBox = function nextBox1() {
     }
     if (currentBox >= lastMeasureNumber) document.getElementById("nextButton").disabled = true;
     if (currentBox > -1) document.getElementById("prevButton").disabled = false;
-};
-window.previousBox = function previousBox1() {
+}
+function previousBox() {
     currentBox -= 1;
     console.log("Current box: ", currentBox);
     document.getElementById("nextButton").disabled = false;
@@ -579,38 +579,35 @@ window.previousBox = function previousBox1() {
         console.log("highlighted boxes:", highlightedBoxes);
     }
     if (currentBox <= -1) document.getElementById("prevButton").disabled = true;
-};
+}
 document.onkeydown = function(e) {
     let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
     let lastMeasureNumber = thisMeasureList[thisMeasureList.length - 1][0].MeasureNumber;
-    switch(e.keyCode){
-        case 37:
+    switch(e.key){
+        case "ArrowLeft":
             if (currentBox > -1) previousBox();
             break;
-        case 39:
+        case "ArrowRight":
             if (currentBox < lastMeasureNumber) nextBox();
             break;
-        case 8:
+        case "Escape":
             currentBox = -1;
             (0, _boundingBoxes.cleanAllBoxes)();
+            color = selectColor;
             break;
-        case 48:
-        case 96:
+        case "0":
             if (color === selectColor) currentBox -= 1;
             color = "#b7bbbd"; // gray
             break;
-        case 49:
-        case 97:
+        case "1":
             if (color === selectColor) currentBox -= 1;
             color = "#33FF42"; // green (easy)
             break;
-        case 50:
-        case 98:
+        case "2":
             if (color === selectColor) currentBox -= 1;
             color = "#FFBE33"; // orange (medium)
             break;
-        case 51:
-        case 99:
+        case "3":
             if (color === selectColor) currentBox -= 1;
             color = "#FF4633"; // red (easy)
             break;
@@ -620,11 +617,7 @@ window.onmousedown = function highlightBoxesWithMouse(event) {
     if (event.shiftKey && color != selectColor) {
         (0, _boundingBoxes.cleanSelectBoxes)();
         let initPos = (0, _utils.mousePosition)(event);
-        let maxDist = {
-            x: 5,
-            y: 5
-        };
-        // let osmdPoint = musicSheet.GraphicSheet.svgToOsmd(clickPointF2D);
+        let maxDist = new (0, _opensheetmusicdisplay.PointF2D)(5, 5);
         let initNearestNote = musicSheet.GraphicSheet.GetNearestNote(initPos, maxDist);
         let initMeasure = initNearestNote.sourceNote.SourceMeasure.MeasureNumber;
         onmouseup = (event)=>{
@@ -34001,6 +33994,7 @@ parcelHelpers.export(exports, "convertUnitsToPixels", ()=>convertUnitsToPixels);
 parcelHelpers.export(exports, "checkAvailability", ()=>checkAvailability);
 parcelHelpers.export(exports, "mousePosition1", ()=>mousePosition1);
 parcelHelpers.export(exports, "mousePosition", ()=>mousePosition);
+var _opensheetmusicdisplay = require("opensheetmusicdisplay");
 const convertUnitsToPixels = (units)=>units * 10;
 function checkAvailability(arr, val) {
     return arr.some(function(arrVal) {
@@ -34021,13 +34015,11 @@ function mousePosition(event) {
     console.log("scroll: ", event.pageY);
     const xpos = event.pageX / units;
     const ypos = event.pageY / units;
-    return {
-        x: xpos,
-        y: ypos
-    };
+    // return { x: xpos, y: ypos };
+    return new (0, _opensheetmusicdisplay.PointF2D)(xpos, ypos);
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","opensheetmusicdisplay":"1ItkX"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a

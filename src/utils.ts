@@ -1,3 +1,5 @@
+import { PointF2D } from "opensheetmusicdisplay";
+
 export const convertUnitsToPixels = (units: number) => units * 10;
 export function checkAvailability(arr: Array<number>, val: number) {
   return arr.some(function (arrVal) {
@@ -16,5 +18,6 @@ export function mousePosition(event: MouseEvent) {
   console.log("scroll: ", event.pageY);
   const xpos = event.pageX / units;
   const ypos = (event.pageY) / units;
-  return { x: xpos, y: ypos };
+  // return { x: xpos, y: ypos };
+  return new PointF2D(xpos, ypos);
 }

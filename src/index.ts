@@ -1,4 +1,4 @@
-import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
+import { OpenSheetMusicDisplay, PointF2D } from "opensheetmusicdisplay";
 import {
   renderBoundingBoxes,
   cleanSelectBoxes,
@@ -17,7 +17,7 @@ export let highlightedBoxes = [];
   musicSheet.render();
 })();
 
-window.nextBox = function nextBox() {
+function nextBox() {
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
   let lastMeasureNumber =
     thisMeasureList[thisMeasureList.length - 1][0].MeasureNumber;
@@ -45,7 +45,7 @@ window.nextBox = function nextBox() {
   }
 };
 
-window.previousBox = function previousBox() {
+function previousBox() {
   currentBox -= 1;
   console.log("Current box: ", currentBox);
   document.getElementById("nextButton").disabled = false;
@@ -125,8 +125,7 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
   if (event.shiftKey && color != selectColor) {
     cleanSelectBoxes();
     let initPos = mousePosition(event);
-    let maxDist = { x: 5, y: 5 };
-    // let osmdPoint = musicSheet.GraphicSheet.svgToOsmd(clickPointF2D);
+    let maxDist = new PointF2D(5, 5);
 
     let initNearestNote = musicSheet.GraphicSheet.GetNearestNote(
       initPos,
