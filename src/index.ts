@@ -70,32 +70,31 @@ document.onkeydown = function (e) {
   let lastMeasureNumber =
     thisMeasureList[thisMeasureList.length - 1][0].MeasureNumber;
 
-  switch (e.keyCode) {
-    case 37: // left arrow
+  switch (e.key) {
+    case "ArrowLeft": 
       if (currentBox > -1) {
         previousBox();
       }
       break;
-    case 39: // right arrow
+    case "ArrowRight": 
       if (currentBox < lastMeasureNumber) {
         nextBox();
       }
       break;
-    case 8: // backspace
+    case "Escape":
       currentBox = -1;
       cleanAllBoxes();
+      color = selectColor;
 
       break;
 
-    case 48:
-    case 96: // key 0
+    case "0": // key 0
       if (color === selectColor) {
         currentBox -= 1;
       }
       color = "#b7bbbd"; // gray
       break;
-    case 49:
-    case 97: // key 1
+    case "1": // key 1
       if (color === selectColor) {
         currentBox -= 1;
       }
@@ -103,8 +102,7 @@ document.onkeydown = function (e) {
       color = "#33FF42"; // green (easy)
 
       break;
-    case 50:
-    case 98: // key 2
+    case "2": // key 2
       if (color === selectColor) {
         currentBox -= 1;
       }
@@ -112,8 +110,7 @@ document.onkeydown = function (e) {
       color = "#FFBE33"; // orange (medium)
       break;
 
-    case 51:
-    case 99: // key 3
+    case "3": // key 3
       if (color === selectColor) {
         currentBox -= 1;
       }
@@ -121,9 +118,6 @@ document.onkeydown = function (e) {
 
       break;
 
-    //case 52 || 100: // key 4
-    // clickMode = !clickMode;
-    // break;
   }
 };
 
