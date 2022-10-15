@@ -1,4 +1,4 @@
-# Foobar
+# Music Sheet Annotator
 
 An web app to annotate the difficulty of piano scores
 
