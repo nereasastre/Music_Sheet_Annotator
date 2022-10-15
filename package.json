@@ -1,10 +1,10 @@
 {
   "name": "origin-change-render-mode",
+  "source": "src/index.html",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
   "scripts": {
-    "start": "parcel index.html static/**/* --open",
+    "start": "parcel src/index.html static/**/* --open",
     "build": "parcel build index.html static/**/*"
   },
   "dependencies": {
