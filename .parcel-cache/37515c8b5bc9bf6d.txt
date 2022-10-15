@@ -93,7 +93,7 @@
 72C:\Users\nersa\OneDrive\Documents\TFG\Music_Sheet_Annotator\node_modules133102947429893595 1
 88C:\Users\nersa\OneDrive\Documents\TFG\Music_Sheet_Annotator\node_modules\yaml\index.d.ts121436361000000000 0
 104C:\Users\nersa\OneDrive\Documents\TFG\Music_Sheet_Annotator\node_modules\posthtml-render\dist\index.d.ts121436361000000000 0
-69C:\Users\nersa\OneDrive\Documents\TFG\Music_Sheet_Annotator\README.md133102323713181349 0
+69C:\Users\nersa\OneDrive\Documents\TFG\Music_Sheet_Annotator\README.md133102959851960104 0
 63C:\Users\nersa\OneDrive\Documents\TFG\Music_Sheet_Annotator\src133102947807630518 1
 110C:\Users\nersa\OneDrive\Documents\TFG\Music_Sheet_Annotator\node_modules\caniuse-lite\data\features\netinfo.js121436361000000000 0
 99C:\Users\nersa\OneDrive\Documents\TFG\Music_Sheet_Annotator\node_modules\@parcel\transformer-js\src133099795632030601 1
