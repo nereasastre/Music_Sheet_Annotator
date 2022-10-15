@@ -34018,13 +34018,9 @@ function mousePosition1(event) {
 }
 function mousePosition(event) {
     const units = 10;
-    let yScroll = 0;
-    onscroll = (event)=>{
-        yScroll = window.scrollY;
-    };
-    console.log("scroll: ", yScroll);
-    const xpos = event.clientX / units;
-    const ypos = (event.clientY + yScroll) / units;
+    console.log("scroll: ", event.pageY);
+    const xpos = event.pageX / units;
+    const ypos = event.pageY / units;
     return {
         x: xpos,
         y: ypos
