@@ -5,7 +5,7 @@ An web app to annotate the difficulty of piano scores
 ## Installation
 
 1. Clone the repository. 
-2. Install parcel into the app. This can be done with the following command:
+2. Install parcel. This can be done with the following command:
 ```bash
 npm install --save-dev parcel
 ```
