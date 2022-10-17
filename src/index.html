@@ -5,35 +5,13 @@
     </title>
     <meta charset="UTF-8" />
   </head>
-  <!--
-  <style>
-    .Buttons {
-      text-decoration: none;
-      display: inline-block;
-      padding: 8px 16px;
-      border-radius: 50%;
-      border-color: white;
-      box-shadow: none;
-      border-style: solid;
+  <style> 
+    .prevent-select {
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
     }
-
-    .Buttons:hover {
-      background-color: #ddd;
-      cursor: pointer;
-    }
-
-    .nextButton {
-      top: 0;
-      position: fixed;
-    }
-
-    .prevButton {
-      top: 0;
-      position: fixed;
-      background-color: white;
-    }
-  </style>
-  -->
+    </style>
 
   <body>
     <div className="App">
@@ -52,7 +30,7 @@
       ></button>
 
       <div class="main">
-        <div id="musicSheet" unselectable="on"></div>
+        <div id="musicSheet" class="prevent-select"></div>
       </div>
     </div>
     <script defer async src="./index.ts" type="module"></script>
