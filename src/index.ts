@@ -85,6 +85,7 @@ document.onkeydown = function (e) {
       currentBox = -1;
       cleanAllBoxes();
       color = selectColor;
+      highlightedBoxes = [];
 
       break;
 
