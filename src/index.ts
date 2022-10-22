@@ -4,15 +4,16 @@ import {
   cleanSelectBoxes,
   cleanBox,
   cleanAllBoxes,
-  initBoxesToNone
+  initBoxesToNone,
+  cleanAndRender
 } from "./boundingBoxes";
 import { mousePosition } from "./utils";
 
 export const musicSheet = new OpenSheetMusicDisplay("musicSheet");
-export let currentBox = -1; // initial box = -1 to not render boxes on start
+export let currentBox = 0; // initial box = -1 to not render boxes on start
 const selectColor = "#b7bbbd";
 export let color = selectColor;
-export let renderedBoxes = [];
+export const scoreName = "Minuet_in_G";
 
 function getLastMeasure(measureList: any){
   return measureList[measureList.length - 1][0].MeasureNumber;
@@ -23,69 +24,51 @@ function getLastMeasure(measureList: any){
   musicSheet.render();
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
   let lastMeasureNumber = getLastMeasure(thisMeasureList);
-  let highlightedBoxes = initBoxesToNone(lastMeasureNumber);
-  window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
+  initBoxesToNone(lastMeasureNumber);
+  renderBoundingBoxes([currentBox], color);  // render box 0 in gray on start
 })();
 
 
 function nextBox() {
+  color = selectColor;
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
   let lastMeasureNumber = getLastMeasure(thisMeasureList);
-  currentBox += 1;
   console.log("Current box: ", currentBox);
   cleanSelectBoxes();
+  currentBox += 1;
 
-  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G") as string);
-  console.log("HIGHLIGHTED BOXES:", highlightedBoxes)
-  if (
-    highlightedBoxes[currentBox] != color ||
-    color === selectColor
-  ) {
-    renderBoundingBoxes([currentBox], color);
-    if (color !== selectColor) {
-      highlightedBoxes[currentBox] = color;
-      window.localStorage.setItem("Minuet_in_G", JSON.stringify(highlightedBoxes));
-    }
-    console.log("highlighted boxes:", highlightedBoxes);
-  }
+  renderBoundingBoxes([currentBox], color);
 
   if (currentBox >= lastMeasureNumber) {
-    document.getElementById("nextButton").disabled = true;
+    // document.getElementById("nextButton").disabled = true;
+    currentBox = lastMeasureNumber;
   }
 
-  if (currentBox > -1) {
-    document.getElementById("prevButton").disabled = false;
-  }
+  //if (currentBox > -1) {
+  //document.getElementById("prevButton").disabled = false;
+  //}
 };
 
 function previousBox() {
+  color = selectColor;
   currentBox -= 1;
   console.log("Current box: ", currentBox);
-  document.getElementById("nextButton").disabled = false;
+  // document.getElementById("nextButton").disabled = false;
+  if (currentBox < -1) {
+    currentBox = 0;
+    //document.getElementById("prevButton").disabled = true;
+  }
   cleanSelectBoxes();
-  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G") as string);
-
-  if (
-    highlightedBoxes[currentBox] != color ||
-    color === selectColor
-  ) {
-    cleanBox(currentBox);
-    renderBoundingBoxes([currentBox], color);
-    if (color !== selectColor) {
-      highlightedBoxes[currentBox] = color;
-      window.localStorage.setItem("Minuet_in_G", JSON.stringify(highlightedBoxes));
-    }
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
+  renderBoundingBoxes([currentBox], color);
     console.log("highlighted boxes:", highlightedBoxes);
-  }
-  if (currentBox <= -1) {
-    document.getElementById("prevButton").disabled = true;
-  }
+
 };
 
 
 window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
   if (event.shiftKey && color != selectColor) {
-    let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G") as string);
+    let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
     cleanSelectBoxes();
     let initPos = mousePosition(event);
     let maxDist = new PointF2D(5, 5);
@@ -98,6 +81,7 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
 
     onmouseup = (event) => {
       if (event.shiftKey) {
+
         let finalPos = mousePosition(event);
         let finalNearestNote = musicSheet.GraphicSheet.GetNearestNote(
           finalPos,
@@ -113,13 +97,11 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
         currentBox = finalMeasure;
         for (let measure = initMeasure; measure < finalMeasure + 1; measure++) {
           if (highlightedBoxes[measure] != color) {
-            renderBoundingBoxes([measure], color);
-            highlightedBoxes[measure] = color;
-            
+            renderBoundingBoxes([measure], color);            
           }
         }
-      window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
       }
+      currentBox += 1;
     };
   } else {
     return;
@@ -148,12 +130,12 @@ document.onkeydown = function (e) {
       cleanAllBoxes();
       color = selectColor;
       let highlightedBoxes = initBoxesToNone(lastMeasureNumber);
-      window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
+      window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
       break;
 
     case "Backspace":
-      cleanBox(currentBox);
       currentBox -= 1;
+      cleanBox(currentBox);
 
       break;
 
@@ -161,28 +143,19 @@ document.onkeydown = function (e) {
       color = "#b7bbbd"; // gray
       break;
 
-    case "1": // key 1
-      if (color === selectColor) {
-        currentBox -= 1;
-      }
-
+    case "1": // key 1    
       color = "#33FF42"; // green (easy)
-
+      currentBox = cleanAndRender(currentBox, color);
       break;
-    case "2": // key 2
-      if (color === selectColor) {
-        currentBox -= 1;
-      }
 
+    case "2": // key 2
       color = "#FFBE33"; // orange (medium)
+      currentBox = cleanAndRender(currentBox, color);
       break;
 
     case "3": // key 3
-      if (color === selectColor) {
-        currentBox -= 1;
-      }
       color = "#FF4633"; // red (easy)
-
+      currentBox = cleanAndRender(currentBox, color);
       break;
 
   }
