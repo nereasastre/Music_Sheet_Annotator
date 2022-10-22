@@ -15,9 +15,8 @@ export function mousePosition1(event: MouseEvent) {
 
 export function mousePosition(event: MouseEvent) {
   const units = 10;
-  console.log("scroll: ", event.pageY);
   const xpos = event.pageX / units;
   const ypos = (event.pageY) / units;
-  // return { x: xpos, y: ypos };
   return new PointF2D(xpos, ypos);
 }
+

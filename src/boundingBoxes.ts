@@ -1,6 +1,6 @@
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
 import { convertUnitsToPixels, checkAvailability } from "./utils";
-import { musicSheet, highlightedBoxes, color, currentBox } from "./index";
+import { musicSheet, currentBox } from "./index";
 
 export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
@@ -48,6 +48,8 @@ export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
         boundingBoxMiddle.setAttribute("height", height1.toString());
         boundingBoxMiddle.setAttribute("width", width.toString());
         boundingBoxMiddle.classList.add("boundingBoxMiddle");
+        boundingBoxMiddle.classList.add("box".concat(currentBox.toString()));
+
 
         document.querySelector("svg")!.append(boundingBox);
         document.querySelector("svg")!.append(boundingBoxMiddle);
@@ -83,6 +85,24 @@ export const cleanAllBoxes = () => {
   middleBoxes.forEach((middleBox) => {
     middleBox.remove();
   });
-  highlightedBoxes = [];
-  color = "#b7bbbd";
 };
+
+export const cleanBox = (boxNumber: number) => {
+  const boxes = document.querySelectorAll(".box".concat(boxNumber.toString()));
+  console.log(boxes);
+  boxes.forEach((box) => {
+    box.remove();
+  });
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G") as string);
+  highlightedBoxes[boxNumber] = "None";
+  window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
+};
+
+export function initBoxesToNone(totalBoxes: number){
+  let highlightedBoxes: { [id: number]: string } = {};
+
+  for (let staff = 0; staff < totalBoxes; staff++) {
+    highlightedBoxes[staff] = "None";
+  }
+  return highlightedBoxes;
+}
