@@ -1,37 +1,47 @@
-import { OpenSheetMusicDisplay, PointF2D } from "opensheetmusicdisplay";
+import { MusicSheet, OpenSheetMusicDisplay, PointF2D } from "opensheetmusicdisplay";
 import {
   renderBoundingBoxes,
   cleanSelectBoxes,
   cleanAllBoxes
 } from "./boundingBoxes";
-import { mousePosition } from "./utils";
+import { mousePosition, initBoxesToNone } from "./utils";
 
 export const musicSheet = new OpenSheetMusicDisplay("musicSheet");
 export let currentBox = -1; // initial box = -1 to not render boxes on start
 const selectColor = "#b7bbbd";
 export let color = selectColor;
-export let highlightedBoxes = [];
+export let renderedBoxes = [];
+
+function getLastMeasure(measureList: any){
+  return measureList[measureList.length - 1][0].MeasureNumber;
+}
 
 (async () => {
   await musicSheet.load("./static/Minuet_in_G_Major.musicxml");
   musicSheet.render();
+  let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
+  let lastMeasureNumber = getLastMeasure(thisMeasureList);
+  let highlightedBoxes = initBoxesToNone(lastMeasureNumber);
+  window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
 })();
+
 
 function nextBox() {
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
-  let lastMeasureNumber =
-    thisMeasureList[thisMeasureList.length - 1][0].MeasureNumber;
-
+  let lastMeasureNumber = getLastMeasure(thisMeasureList);
   currentBox += 1;
   console.log("Current box: ", currentBox);
   cleanSelectBoxes();
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G"));
+  console.log("HIGHLIGHTED BOXES:", highlightedBoxes)
   if (
-    highlightedBoxes.includes(currentBox) === false ||
+    highlightedBoxes[currentBox] != color ||
     color === selectColor
   ) {
     renderBoundingBoxes([currentBox], color);
     if (color !== selectColor) {
-      highlightedBoxes.push(currentBox);
+      highlightedBoxes[currentBox] = color;
+      window.localStorage.setItem("Minuet_in_G", JSON.stringify(highlightedBoxes));
     }
     console.log("highlighted boxes:", highlightedBoxes);
   }
@@ -50,13 +60,16 @@ function previousBox() {
   console.log("Current box: ", currentBox);
   document.getElementById("nextButton").disabled = false;
   cleanSelectBoxes();
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G"));
+
   if (
-    highlightedBoxes.includes(currentBox) === false ||
+    highlightedBoxes[currentBox] != color ||
     color === selectColor
   ) {
     renderBoundingBoxes([currentBox], color);
     if (color !== selectColor) {
-      highlightedBoxes.push(currentBox);
+      highlightedBoxes[currentBox] = color;
+      window.localStorage.setItem("Minuet_in_G", JSON.stringify(highlightedBoxes));
     }
     console.log("highlighted boxes:", highlightedBoxes);
   }
@@ -85,8 +98,8 @@ document.onkeydown = function (e) {
       currentBox = -1;
       cleanAllBoxes();
       color = selectColor;
-      highlightedBoxes = [];
-
+      let highlightedBoxes = initBoxesToNone(lastMeasureNumber);
+      window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
       break;
 
     case "0": // key 0
@@ -124,6 +137,7 @@ document.onkeydown = function (e) {
 
 window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
   if (event.shiftKey && color != selectColor) {
+    let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G"));
     cleanSelectBoxes();
     let initPos = mousePosition(event);
     let maxDist = new PointF2D(5, 5);
@@ -150,15 +164,13 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
         }
         currentBox = finalMeasure;
         for (let measure = initMeasure; measure < finalMeasure + 1; measure++) {
-          if (highlightedBoxes.includes(measure) === false) {
+          if (highlightedBoxes[measure] != color) {
             renderBoundingBoxes([measure], color);
-            if (color !== selectColor) {
-              highlightedBoxes.push(measure);
-            }
+            highlightedBoxes[measure] = color;
+            
           }
         }
-
-        console.log(initPos, finalPos);
+      window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
       }
     };
   } else {
