@@ -2,9 +2,11 @@ import { MusicSheet, OpenSheetMusicDisplay, PointF2D } from "opensheetmusicdispl
 import {
   renderBoundingBoxes,
   cleanSelectBoxes,
-  cleanAllBoxes
+  cleanBox,
+  cleanAllBoxes,
+  initBoxesToNone
 } from "./boundingBoxes";
-import { mousePosition, initBoxesToNone } from "./utils";
+import { mousePosition } from "./utils";
 
 export const musicSheet = new OpenSheetMusicDisplay("musicSheet");
 export let currentBox = -1; // initial box = -1 to not render boxes on start
@@ -32,7 +34,8 @@ function nextBox() {
   currentBox += 1;
   console.log("Current box: ", currentBox);
   cleanSelectBoxes();
-  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G"));
+
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G") as string);
   console.log("HIGHLIGHTED BOXES:", highlightedBoxes)
   if (
     highlightedBoxes[currentBox] != color ||
@@ -60,12 +63,13 @@ function previousBox() {
   console.log("Current box: ", currentBox);
   document.getElementById("nextButton").disabled = false;
   cleanSelectBoxes();
-  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G"));
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G") as string);
 
   if (
     highlightedBoxes[currentBox] != color ||
     color === selectColor
   ) {
+    cleanBox(currentBox);
     renderBoundingBoxes([currentBox], color);
     if (color !== selectColor) {
       highlightedBoxes[currentBox] = color;
@@ -78,66 +82,10 @@ function previousBox() {
   }
 };
 
-document.onkeydown = function (e) {
-  let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
-  let lastMeasureNumber =
-    thisMeasureList[thisMeasureList.length - 1][0].MeasureNumber;
-
-  switch (e.key) {
-    case "ArrowLeft": 
-      if (currentBox > -1) {
-        previousBox();
-      }
-      break;
-    case "ArrowRight": 
-      if (currentBox < lastMeasureNumber) {
-        nextBox();
-      }
-      break;
-    case "Escape":
-      currentBox = -1;
-      cleanAllBoxes();
-      color = selectColor;
-      let highlightedBoxes = initBoxesToNone(lastMeasureNumber);
-      window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
-      break;
-
-    case "0": // key 0
-      if (color === selectColor) {
-        currentBox -= 1;
-      }
-      color = "#b7bbbd"; // gray
-      break;
-    case "1": // key 1
-      if (color === selectColor) {
-        currentBox -= 1;
-      }
-
-      color = "#33FF42"; // green (easy)
-
-      break;
-    case "2": // key 2
-      if (color === selectColor) {
-        currentBox -= 1;
-      }
-
-      color = "#FFBE33"; // orange (medium)
-      break;
-
-    case "3": // key 3
-      if (color === selectColor) {
-        currentBox -= 1;
-      }
-      color = "#FF4633"; // red (easy)
-
-      break;
-
-  }
-};
 
 window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
   if (event.shiftKey && color != selectColor) {
-    let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G"));
+    let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G") as string);
     cleanSelectBoxes();
     let initPos = mousePosition(event);
     let maxDist = new PointF2D(5, 5);
@@ -175,5 +123,67 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
     };
   } else {
     return;
+  }
+};
+
+
+document.onkeydown = function (e) {
+  let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
+  let lastMeasureNumber =
+    thisMeasureList[thisMeasureList.length - 1][0].MeasureNumber;
+
+  switch (e.key) {
+    case "ArrowLeft": 
+      if (currentBox > -1) {
+        previousBox();
+      }
+      break;
+    case "ArrowRight": 
+      if (currentBox < lastMeasureNumber) {
+        nextBox();
+      }
+      break;
+    case "Escape":
+      currentBox = -1;
+      cleanAllBoxes();
+      color = selectColor;
+      let highlightedBoxes = initBoxesToNone(lastMeasureNumber);
+      window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
+      break;
+
+    case "Backspace":
+      cleanBox(currentBox);
+      currentBox -= 1;
+
+      break;
+
+    case "0": // key 0
+      color = "#b7bbbd"; // gray
+      break;
+
+    case "1": // key 1
+      if (color === selectColor) {
+        currentBox -= 1;
+      }
+
+      color = "#33FF42"; // green (easy)
+
+      break;
+    case "2": // key 2
+      if (color === selectColor) {
+        currentBox -= 1;
+      }
+
+      color = "#FFBE33"; // orange (medium)
+      break;
+
+    case "3": // key 3
+      if (color === selectColor) {
+        currentBox -= 1;
+      }
+      color = "#FF4633"; // red (easy)
+
+      break;
+
   }
 };

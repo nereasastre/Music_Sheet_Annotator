@@ -17,15 +17,6 @@ export function mousePosition(event: MouseEvent) {
   const units = 10;
   const xpos = event.pageX / units;
   const ypos = (event.pageY) / units;
-  // return { x: xpos, y: ypos };
   return new PointF2D(xpos, ypos);
 }
 
-export function initBoxesToNone(totalBoxes: number){
-  let highlightedBoxes: { [id: number]: string } = {};
-
-  for (let staff = 0; staff < totalBoxes; staff++) {
-    highlightedBoxes[staff] = "None";
-  }
-  return highlightedBoxes;
-}
