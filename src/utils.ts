@@ -20,5 +20,7 @@ export function mousePosition(event: MouseEvent) {
   return new PointF2D(xpos, ypos);
 }
 
+export let keyToColor: { [id: string]: string } = {"1": "#33FF42", "2": "#FFBE33", "3": "#FF4633"};
+
 
 

@@ -4,16 +4,17 @@ import {
   cleanSelectBoxes,
   cleanBox,
   cleanAllBoxes,
-  initBoxesToNone,
-  cleanAndRender
+  initLocalStorageToNone,
+  renderBoxAndContinue
 } from "./boundingBoxes";
-import { mousePosition } from "./utils";
+import { keyToColor, mousePosition } from "./utils";
 
+const selectColor = "#b7bbbd";
 export const musicSheet = new OpenSheetMusicDisplay("musicSheet");
 export let currentBox = 0; // initial box = -1 to not render boxes on start
-const selectColor = "#b7bbbd";
 export let color = selectColor;
 export const scoreName = "Minuet_in_G";
+
 
 function getLastMeasure(measureList: any){
   return measureList[measureList.length - 1][0].MeasureNumber;
@@ -24,52 +25,47 @@ function getLastMeasure(measureList: any){
   musicSheet.render();
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
   let lastMeasureNumber = getLastMeasure(thisMeasureList);
-  initBoxesToNone(lastMeasureNumber);
+  initLocalStorageToNone(lastMeasureNumber);
   renderBoundingBoxes([currentBox], color);  // render box 0 in gray on start
 })();
 
 
-function nextBox() {
+function selectNextBox() {
   color = selectColor;
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
   let lastMeasureNumber = getLastMeasure(thisMeasureList);
-  console.log("Current box: ", currentBox);
   cleanSelectBoxes();
+  
   currentBox += 1;
+  console.log("Current box: ", currentBox);
 
   renderBoundingBoxes([currentBox], color);
 
   if (currentBox >= lastMeasureNumber) {
-    // document.getElementById("nextButton").disabled = true;
     currentBox = lastMeasureNumber;
   }
 
-  //if (currentBox > -1) {
-  //document.getElementById("prevButton").disabled = false;
-  //}
 };
 
-function previousBox() {
+function selectPreviousBox() {
   color = selectColor;
+  cleanSelectBoxes();
   currentBox -= 1;
   console.log("Current box: ", currentBox);
-  // document.getElementById("nextButton").disabled = false;
   if (currentBox < -1) {
     currentBox = 0;
-    //document.getElementById("prevButton").disabled = true;
   }
-  cleanSelectBoxes();
-  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
   renderBoundingBoxes([currentBox], color);
-    console.log("highlighted boxes:", highlightedBoxes);
 
 };
 
 
 window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
-  if (event.shiftKey && color != selectColor) {
-    let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
+  if (event.shiftKey && color !== "#b7bbbd") {
+
     cleanSelectBoxes();
+
+    let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
     let initPos = mousePosition(event);
     let maxDist = new PointF2D(5, 5);
 
@@ -89,7 +85,7 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
         );
         let finalMeasure =
           finalNearestNote.sourceNote.SourceMeasure.MeasureNumber;
-        if (finalMeasure < initMeasure) {
+        if (finalMeasure < initMeasure) {  // if selection is from right to left, swap init and final
           const previousFinalMeasure = finalMeasure;
           finalMeasure = initMeasure;
           initMeasure = previousFinalMeasure;
@@ -97,11 +93,14 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
         currentBox = finalMeasure;
         for (let measure = initMeasure; measure < finalMeasure + 1; measure++) {
           if (highlightedBoxes[measure] != color) {
+            cleanBox(measure);
             renderBoundingBoxes([measure], color);            
           }
         }
       }
       currentBox += 1;
+      color = "#b7bbbd"
+      renderBoundingBoxes([currentBox], color)
     };
   } else {
     return;
@@ -117,19 +116,19 @@ document.onkeydown = function (e) {
   switch (e.key) {
     case "ArrowLeft": 
       if (currentBox > -1) {
-        previousBox();
+        selectPreviousBox();
       }
       break;
     case "ArrowRight": 
       if (currentBox < lastMeasureNumber) {
-        nextBox();
+        selectNextBox();
       }
       break;
     case "Escape":
-      currentBox = -1;
+      currentBox = 0;
       cleanAllBoxes();
       color = selectColor;
-      let highlightedBoxes = initBoxesToNone(lastMeasureNumber);
+      let highlightedBoxes = initLocalStorageToNone(lastMeasureNumber);
       window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
       break;
 
@@ -144,17 +143,17 @@ document.onkeydown = function (e) {
 
     case "1": // key 1    
       color = "#33FF42"; // green (easy)
-      currentBox = cleanAndRender(currentBox, color);
+      currentBox = renderBoxAndContinue(currentBox, color);
       break;
 
     case "2": // key 2
       color = "#FFBE33"; // orange (medium)
-      currentBox = cleanAndRender(currentBox, color);
+      currentBox = renderBoxAndContinue(currentBox, color);
       break;
 
     case "3": // key 3
-      color = "#FF4633"; // red (easy)
-      currentBox = cleanAndRender(currentBox, color);
+      color = "#FF4633"; // red (hard)
+      currentBox = renderBoxAndContinue(currentBox, color);
       break;
 
   }

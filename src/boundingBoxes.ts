@@ -9,7 +9,6 @@ export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
     let measureNumber =  measure[0].MeasureNumber
     if (checkAvailability(numList, measureNumber)) {
       for (let staff = 0; staff < measure.length; staff++) {
-        console.log("measure number", measure[0].MeasureNumber);
         const positionAndShape = measure[staff].PositionAndShape;
         const positionAndShape1 = measure[1].PositionAndShape;
         const height = convertUnitsToPixels(4);
@@ -48,7 +47,7 @@ export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
         boundingBoxMiddle.setAttribute("y", y1.toString());
         boundingBoxMiddle.setAttribute("height", height1.toString());
         boundingBoxMiddle.setAttribute("width", width.toString());
-        boundingBoxMiddle.classList.add("boundingBoxMiddle");
+        boundingBoxMiddle.classList.add("boundingBox");
         boundingBoxMiddle.classList.add("box".concat(measureNumber.toString()));
 
         document.querySelector("svg")!.append(boundingBox);
@@ -56,7 +55,7 @@ export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
 
         if (color === "#b7bbbd") {
           boundingBox.classList.add("erasableBoundingBox");
-          boundingBoxMiddle.classList.add("erasableBoundingBoxMiddle");
+          boundingBoxMiddle.classList.add("erasableBoundingBox");
           
         } else {
           highlightedBoxes[measureNumber] = color;
@@ -69,26 +68,18 @@ export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
 
 export const cleanSelectBoxes = () => {
   const boxes = document.querySelectorAll(".erasableBoundingBox");
-  const middleBoxes = document.querySelectorAll(".erasableBoundingBoxMiddle");
   boxes.forEach((box) => {
     box.remove();
   });
-
-  middleBoxes.forEach((middleBox) => {
-    middleBox.remove();
-  });
+ 
 };
 
 export const cleanAllBoxes = () => {
   const boxes = document.querySelectorAll(".boundingBox");
-  const middleBoxes = document.querySelectorAll(".boundingBoxMiddle");
   boxes.forEach((box) => {
     box.remove();
   });
 
-  middleBoxes.forEach((middleBox) => {
-    middleBox.remove();
-  });
 };
 
 export const cleanBox = (boxNumber: number) => {
@@ -102,7 +93,7 @@ export const cleanBox = (boxNumber: number) => {
   window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
 };
 
-export function initBoxesToNone(totalBoxes: number){
+export function initLocalStorageToNone(totalBoxes: number){
   let highlightedBoxes: { [id: number]: string } = {};
 
   for (let staff = 0; staff < totalBoxes; staff++) {
@@ -112,10 +103,9 @@ export function initBoxesToNone(totalBoxes: number){
   return highlightedBoxes;
 }
 
-export function cleanAndRender(boxNumber: number, color: string){
+export function renderBoxAndContinue(boxNumber: number, color: string){
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
   let lastMeasureNumber =  Object.keys(highlightedBoxes).length;;
-  console.log("LAST MEASURE NUMBER", lastMeasureNumber);
   if (color === "#b7bbbd") {
     boxNumber -= 1;
   }
