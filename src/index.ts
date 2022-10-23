@@ -135,12 +135,11 @@ document.onkeydown = function (e) {
 
     case "Backspace":
       currentBox -= 1;
+      cleanSelectBoxes();
       cleanBox(currentBox);
+      color = selectColor;
+      renderBoundingBoxes([currentBox], selectColor);
 
-      break;
-
-    case "0": // key 0
-      color = "#b7bbbd"; // gray
       break;
 
     case "1": // key 1    

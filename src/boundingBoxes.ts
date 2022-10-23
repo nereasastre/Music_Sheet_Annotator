@@ -130,6 +130,7 @@ export function cleanAndRender(boxNumber: number, color: string){
   } else {
     boxNumber = lastMeasureNumber - 1;
   }
-
+  color = "#b7bbbd"
+  renderBoundingBoxes([boxNumber], color)
   return boxNumber;
 }
