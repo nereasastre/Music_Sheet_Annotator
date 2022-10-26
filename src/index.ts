@@ -53,7 +53,7 @@ function selectPreviousBox() {
   cleanSelectBoxes();
   currentBox -= 1;
   console.log("Current box: ", currentBox);
-  if (currentBox < -1) {
+  if (currentBox <= 0) {
     currentBox = 0;
   }
   renderBoundingBoxes([currentBox], color);
@@ -63,7 +63,6 @@ function selectPreviousBox() {
 
 window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
   if (event.shiftKey && color !== "#b7bbbd") {
-
     cleanSelectBoxes();
 
     let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
@@ -164,6 +163,6 @@ document.onkeydown = function (e) {
       } else {
         renderBoundingBoxes([currentBox], selectColor)
       }
-
-  }
+    break;
+    }
 };
