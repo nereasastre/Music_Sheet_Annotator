@@ -1,14 +1,14 @@
-import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
 import { convertUnitsToPixels, checkAvailability } from "./utils";
-import { musicSheet, currentBox } from "./index";
+import { musicSheet, currentBox, scoreName } from "./index";
 
 export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
 
   for (const measure of thisMeasureList) {
-    if (checkAvailability(numList, measure[0].MeasureNumber)) {
+    let measureNumber =  measure[0].MeasureNumber
+    if (checkAvailability(numList, measureNumber)) {
       for (let staff = 0; staff < measure.length; staff++) {
-        console.log("measure number", measure[0].MeasureNumber);
         const positionAndShape = measure[staff].PositionAndShape;
         const positionAndShape1 = measure[1].PositionAndShape;
         const height = convertUnitsToPixels(4);
@@ -39,7 +39,7 @@ export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
         boundingBox.setAttribute("height", height.toString());
         boundingBox.setAttribute("width", width.toString());
         boundingBox.classList.add("boundingBox");
-        boundingBox.classList.add("box".concat(currentBox.toString()));
+        boundingBox.classList.add("box".concat(measureNumber.toString()));
 
         boundingBoxMiddle.setAttribute("fill", color);
         boundingBoxMiddle.setAttribute("fill-opacity", "0.25");
@@ -47,44 +47,39 @@ export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
         boundingBoxMiddle.setAttribute("y", y1.toString());
         boundingBoxMiddle.setAttribute("height", height1.toString());
         boundingBoxMiddle.setAttribute("width", width.toString());
-        boundingBoxMiddle.classList.add("boundingBoxMiddle");
-        boundingBoxMiddle.classList.add("box".concat(currentBox.toString()));
-
+        boundingBoxMiddle.classList.add("boundingBox");
+        boundingBoxMiddle.classList.add("box".concat(measureNumber.toString()));
 
         document.querySelector("svg")!.append(boundingBox);
         document.querySelector("svg")!.append(boundingBoxMiddle);
 
         if (color === "#b7bbbd") {
           boundingBox.classList.add("erasableBoundingBox");
-          boundingBoxMiddle.classList.add("erasableBoundingBoxMiddle");
+          boundingBoxMiddle.classList.add("erasableBoundingBox");
+          
+        } else {
+          highlightedBoxes[measureNumber] = color;
         }
       }
     }
   }
+  window.localStorage.setItem(scoreName, JSON.stringify(highlightedBoxes));
 };
 
 export const cleanSelectBoxes = () => {
   const boxes = document.querySelectorAll(".erasableBoundingBox");
-  const middleBoxes = document.querySelectorAll(".erasableBoundingBoxMiddle");
   boxes.forEach((box) => {
     box.remove();
   });
-
-  middleBoxes.forEach((middleBox) => {
-    middleBox.remove();
-  });
+ 
 };
 
 export const cleanAllBoxes = () => {
   const boxes = document.querySelectorAll(".boundingBox");
-  const middleBoxes = document.querySelectorAll(".boundingBoxMiddle");
   boxes.forEach((box) => {
     box.remove();
   });
 
-  middleBoxes.forEach((middleBox) => {
-    middleBox.remove();
-  });
 };
 
 export const cleanBox = (boxNumber: number) => {
@@ -93,16 +88,39 @@ export const cleanBox = (boxNumber: number) => {
   boxes.forEach((box) => {
     box.remove();
   });
-  let highlightedBoxes = JSON.parse(window.localStorage.getItem("Minuet_in_G") as string);
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
   highlightedBoxes[boxNumber] = "None";
-  window.localStorage.setItem("Minuet_in_G", JSON.stringify( highlightedBoxes));
+  window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
 };
 
-export function initBoxesToNone(totalBoxes: number){
+export function initLocalStorageToNone(totalBoxes: number){
   let highlightedBoxes: { [id: number]: string } = {};
 
   for (let staff = 0; staff < totalBoxes; staff++) {
     highlightedBoxes[staff] = "None";
   }
+  window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
   return highlightedBoxes;
+}
+
+export function renderBoxAndContinue(boxNumber: number, color: string, lastMeasureNumber: number){
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
+  // let lastMeasureNumber =  Object.keys(highlightedBoxes).length;;
+  if (color === "#b7bbbd") {
+    boxNumber -= 1;
+  }
+  cleanSelectBoxes();
+  if (highlightedBoxes[boxNumber] != color){
+    cleanBox(boxNumber);
+    renderBoundingBoxes([boxNumber], color);
+
+  }
+  if (boxNumber < lastMeasureNumber){
+    boxNumber += 1;
+  } else {
+    boxNumber = lastMeasureNumber;
+  }
+  color = "#b7bbbd"
+  renderBoundingBoxes([boxNumber], color)
+  return boxNumber;
 }
