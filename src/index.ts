@@ -16,7 +16,6 @@ export let color = selectColor;
 export const scoreName = "Minuet_in_G";
 let hideBoundingBoxes = false;
 
-
 function getLastMeasure(measureList: any){
   return measureList[measureList.length - 1][0].MeasureNumber;
 }
@@ -112,57 +111,64 @@ document.onkeydown = function (e) {
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
   let lastMeasureNumber =
     thisMeasureList[thisMeasureList.length - 1][0].MeasureNumber;
-
-  switch (e.key) {
-    case "ArrowLeft": 
-      if (currentBox > -1) {
-        selectPreviousBox();
-        hideBoundingBoxes = false;
-      }
-      break;
-    case "ArrowRight": 
-      if (currentBox < lastMeasureNumber) {
-        selectNextBox();
-        hideBoundingBoxes = false;
-
-      }
-      break;
-    case "Escape":
-      currentBox = 0;
-      cleanAllBoxes();
-      color = selectColor;
-      let highlightedBoxes = initLocalStorageToNone(lastMeasureNumber);
-      window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
-      break;
-
-    case "Backspace":
-      cleanSelectBoxes();
-      cleanBox(currentBox);
-      if (currentBox > 0){
-        currentBox -= 1;
-      }
-
-      color = selectColor;
-      renderBoundingBoxes([currentBox], selectColor);
-
-      break;
-
-    case "1": // key 1    
-      case "2": // key 2
-        case "3": // key 3
-          color = keyToColor[e.key];
-          if (currentBox <= lastMeasureNumber){
-            currentBox = renderBoxAndContinue(currentBox, color, lastMeasureNumber);
-          }
-    break;
-
-    case "h":
-      hideBoundingBoxes = !hideBoundingBoxes;
-      if (hideBoundingBoxes) {
-        cleanSelectBoxes();
-      } else {
-        renderBoundingBoxes([currentBox], selectColor)
-      }
-    break;
+  if (e.code == "ArrowLeft"){
+    if (currentBox > -1) {
+      selectPreviousBox();
+      hideBoundingBoxes = false;
     }
+  }
+  else if (e.code == "ArrowRight"){
+    if (currentBox < lastMeasureNumber) {
+      selectNextBox();
+      hideBoundingBoxes = false;
+
+    }
+      }
+  else if (e.code == "Escape"){
+    currentBox = 0;
+    cleanAllBoxes();
+    color = selectColor;
+    let highlightedBoxes = initLocalStorageToNone(lastMeasureNumber);
+    window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
+  }
+
+  else if (e.code == "Backspace"){
+    cleanSelectBoxes();
+    cleanBox(currentBox);
+    if (currentBox > 0){
+      currentBox -= 1;
+    }
+
+    color = selectColor;
+    renderBoundingBoxes([currentBox], selectColor);
+  }
+  else if (e.code == "Digit1" || e.code == "Numpad1"){
+    color = keyToColor["1"];
+    if (currentBox <= lastMeasureNumber && !e.shiftKey){
+      currentBox = renderBoxAndContinue(currentBox, color, lastMeasureNumber);
+    }
+  }
+  else if (e.code == "Digit2" || e.code == "Numpad2"){
+    color = keyToColor["2"];
+    if (currentBox <= lastMeasureNumber && !e.shiftKey){
+      currentBox = renderBoxAndContinue(currentBox, color, lastMeasureNumber);
+    }
+  }
+  
+  else if (e.code == "Digit3" || e.code == "Numpad3"){
+    color = keyToColor["3"];
+    if (currentBox <= lastMeasureNumber && !e.shiftKey){
+      currentBox = renderBoxAndContinue(currentBox, color, lastMeasureNumber);
+    }
+  }
+
+  else if (e.code == "KeyH"){
+    hideBoundingBoxes = !hideBoundingBoxes;
+    if (hideBoundingBoxes) {
+      cleanSelectBoxes();
+    } else {
+      renderBoundingBoxes([currentBox], selectColor)
+    }
+  }
+  
 };
