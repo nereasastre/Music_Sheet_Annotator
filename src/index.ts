@@ -143,19 +143,11 @@ document.onkeydown = function (e) {
       break;
 
     case "1": // key 1    
-      color = "#33FF42"; // green (easy)
-      currentBox = renderBoxAndContinue(currentBox, color);
-      break;
-
-    case "2": // key 2
-      color = "#FFBE33"; // orange (medium)
-      currentBox = renderBoxAndContinue(currentBox, color);
-      break;
-
-    case "3": // key 3
-      color = "#FF4633"; // red (hard)
-      currentBox = renderBoxAndContinue(currentBox, color);
-      break;
+      case "2": // key 2
+        case "3": // key 3
+          color = keyToColor[e.key];
+          currentBox = renderBoxAndContinue(currentBox, color);
+    break;
 
   }
 };
