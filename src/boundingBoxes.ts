@@ -103,9 +103,9 @@ export function initLocalStorageToNone(totalBoxes: number){
   return highlightedBoxes;
 }
 
-export function renderBoxAndContinue(boxNumber: number, color: string){
+export function renderBoxAndContinue(boxNumber: number, color: string, lastMeasureNumber: number){
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
-  let lastMeasureNumber =  Object.keys(highlightedBoxes).length;;
+  // let lastMeasureNumber =  Object.keys(highlightedBoxes).length;;
   if (color === "#b7bbbd") {
     boxNumber -= 1;
   }
@@ -118,7 +118,7 @@ export function renderBoxAndContinue(boxNumber: number, color: string){
   if (boxNumber < lastMeasureNumber){
     boxNumber += 1;
   } else {
-    boxNumber = lastMeasureNumber - 1;
+    boxNumber = lastMeasureNumber;
   }
   color = "#b7bbbd"
   renderBoundingBoxes([boxNumber], color)

@@ -14,6 +14,7 @@ export const musicSheet = new OpenSheetMusicDisplay("musicSheet");
 export let currentBox = 0; // initial box = -1 to not render boxes on start
 export let color = selectColor;
 export const scoreName = "Minuet_in_G";
+let hideBoundingBoxes = false;
 
 
 function getLastMeasure(measureList: any){
@@ -117,11 +118,14 @@ document.onkeydown = function (e) {
     case "ArrowLeft": 
       if (currentBox > -1) {
         selectPreviousBox();
+        hideBoundingBoxes = false;
       }
       break;
     case "ArrowRight": 
       if (currentBox < lastMeasureNumber) {
         selectNextBox();
+        hideBoundingBoxes = false;
+
       }
       break;
     case "Escape":
@@ -135,7 +139,9 @@ document.onkeydown = function (e) {
     case "Backspace":
       cleanSelectBoxes();
       cleanBox(currentBox);
-      currentBox -= 1;
+      if (currentBox > 0){
+        currentBox -= 1;
+      }
 
       color = selectColor;
       renderBoundingBoxes([currentBox], selectColor);
@@ -146,8 +152,18 @@ document.onkeydown = function (e) {
       case "2": // key 2
         case "3": // key 3
           color = keyToColor[e.key];
-          currentBox = renderBoxAndContinue(currentBox, color);
+          if (currentBox <= lastMeasureNumber){
+            currentBox = renderBoxAndContinue(currentBox, color, lastMeasureNumber);
+          }
     break;
+
+    case "h":
+      hideBoundingBoxes = !hideBoundingBoxes;
+      if (hideBoundingBoxes) {
+        cleanSelectBoxes();
+      } else {
+        renderBoundingBoxes([currentBox], selectColor)
+      }
 
   }
 };
