@@ -133,9 +133,10 @@ document.onkeydown = function (e) {
       break;
 
     case "Backspace":
-      currentBox -= 1;
       cleanSelectBoxes();
       cleanBox(currentBox);
+      currentBox -= 1;
+
       color = selectColor;
       renderBoundingBoxes([currentBox], selectColor);
 
