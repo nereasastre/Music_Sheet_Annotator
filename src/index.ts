@@ -97,6 +97,7 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
           }
         }
       }
+      
       currentBox += 1;
       color = "#b7bbbd"
       renderBoundingBoxes([currentBox], color)
@@ -133,10 +134,13 @@ document.onkeydown = function (e) {
   }
 
   else if (e.code == "Backspace"){
-    cleanSelectBoxes();
     cleanBox(currentBox);
     if (currentBox > 0){
+      cleanSelectBoxes();
       currentBox -= 1;
+    } else {
+      currentBox = 0;
+    
     }
 
     color = selectColor;
