@@ -21,6 +21,7 @@ export function mousePosition(event: MouseEvent) {
 }
 
 export let keyToColor: { [id: string]: string } = {"1": "#33FF42", "2": "#FFBE33", "3": "#FF4633"};
+export let colorToDifficulty: { [id: string]: string } = {"#33FF42": "easy", "#FFBE33": "medium", "#FF4633": "hard"};
 
 
 

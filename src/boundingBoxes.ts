@@ -1,5 +1,6 @@
 import { convertUnitsToPixels, checkAvailability } from "./utils";
 import { musicSheet, currentBox, scoreName } from "./index";
+import { colorToDifficulty } from "./utils";
 
 export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
@@ -58,7 +59,7 @@ export const renderBoundingBoxes = (numList: Array<number>, color: string) => {
           boundingBoxMiddle.classList.add("erasableBoundingBox");
           
         } else {
-          highlightedBoxes[measureNumber] = color;
+          highlightedBoxes[measureNumber] = colorToDifficulty[color];
         }
       }
     }
@@ -110,7 +111,7 @@ export function renderBoxAndContinue(boxNumber: number, color: string, lastMeasu
     boxNumber -= 1;
   }
   cleanSelectBoxes();
-  if (highlightedBoxes[boxNumber] != color){
+  if (highlightedBoxes[boxNumber] != colorToDifficulty[color]){
     cleanBox(boxNumber);
     renderBoundingBoxes([boxNumber], color);
 

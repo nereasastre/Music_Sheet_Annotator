@@ -7,7 +7,7 @@ import {
   initLocalStorageToNone,
   renderBoxAndContinue
 } from "./boundingBoxes";
-import { keyToColor, mousePosition } from "./utils";
+import { colorToDifficulty, keyToColor, mousePosition } from "./utils";
 
 const selectColor = "#b7bbbd";
 export const musicSheet = new OpenSheetMusicDisplay("musicSheet");
@@ -61,7 +61,10 @@ function selectPreviousBox() {
 
 
 window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
-  if (event.shiftKey && color !== "#b7bbbd") {
+
+  if (event.shiftKey && color != "#b7bbbd") {
+
+    console.log(color);
     cleanSelectBoxes();
 
     let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
@@ -75,6 +78,10 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
     let initMeasure = initNearestNote.sourceNote.SourceMeasure.MeasureNumber;
 
     onmouseup = (event) => {
+      if (color == "#b7bbbd") {
+        return
+      }
+
       if (event.shiftKey) {
 
         let finalPos = mousePosition(event);
@@ -91,7 +98,7 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
         }
         currentBox = finalMeasure;
         for (let measure = initMeasure; measure < finalMeasure + 1; measure++) {
-          if (highlightedBoxes[measure] != color) {
+          if (highlightedBoxes[measure] != colorToDifficulty[color]) {
             cleanBox(measure);
             renderBoundingBoxes([measure], color);            
           }
@@ -99,8 +106,7 @@ window.onmousedown = function highlightBoxesWithMouse(event: MouseEvent) {
       }
       
       currentBox += 1;
-      color = "#b7bbbd"
-      renderBoundingBoxes([currentBox], color)
+      renderBoundingBoxes([currentBox], selectColor)
     };
   } else {
     return;
