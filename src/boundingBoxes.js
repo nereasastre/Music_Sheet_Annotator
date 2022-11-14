@@ -1,5 +1,5 @@
-import { convertUnitsToPixels, checkAvailability, colorToDifficulty } from "../../Music_Sheet_Annotator/src/utils";
-import { musicSheet, currentBox, scoreName } from "../../Music_Sheet_Annotator/src";
+import { convertUnitsToPixels, checkAvailability, colorToDifficulty } from "./utils";
+import { musicSheet, currentBox, scoreName } from "./index";
 
 export const renderBoundingBoxes = (numList, color) => {
   let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
