@@ -1,4 +1,4 @@
-import { PointF2D } from "./opensheetmusicdisplay.min.js";
+import { PointF2D } from "opensheetmusicdisplay";
 
 export const convertUnitsToPixels = (units) => units * 10;
 export function checkAvailability(arr, val) {

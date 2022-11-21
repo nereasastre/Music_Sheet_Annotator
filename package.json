@@ -1,18 +1,53 @@
 {
-  "name": "origin-change-render-mode",
-  "source": "src/index.html",
+  "name": "react-opensheetmusicdisplay",
   "version": "1.0.0",
-  "description": "",
+  "description": "A react opensheetmusicdisplay component",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "start": "parcel src/index.html static/**/* --open",
-    "build": "parcel build index.html static/**/*"
+    "start": "react-scripts start",
+    "build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nereasastre/Music_Sheet_Annotator"
+  },
+  "keywords": [
+    "osmd",
+    "music_sheet_annotator",
+    "opensheetmusicdisplay",
+    "vexflow",
+    "musicxml",
+    "sheet",
+    "music"
+  ],
+  "author": "Nerea Sastre",
+  "license": "MIT",
   "dependencies": {
-    "opensheetmusicdisplay": "1.5.5"
+    "opensheetmusicdisplay": "^1.0.0",
+    "react-hotkeys": "^2.0.0",
+    "react-hotkeys-hook": "^4.0.4"
   },
   "devDependencies": {
-    "parcel": "^2.7.0",
-    "typescript": "^4.8.4"
+    "babel-cli": "^6.26.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.2.0"
   },
-  "keywords": []
+  "bugs": {
+    "url": "https://github.com/nereasastre/Music_Sheet_Annotator/issues"
+  },
+  "homepage": "https://github.com/nereasastre/Music_Sheet_Annotator#readme",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
