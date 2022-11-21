@@ -31,15 +31,15 @@ class App extends Component {
     await new Promise(r => setTimeout(r, 2000)); // wait for osmd to load
     this.measureList = this.osmd.graphic.measureList
     this.currentBox = 1;
-    await new Promise(r => setTimeout(r, 2000)); // wait for osmd to load
-
+    this.lastMeasureNumber = this.measureList[this.measureList.length - 1][0].MeasureNumber;
+    this.highlightedBoxes = initLocalStorageToNone(this.lastMeasureNumber, this.state.file);
   }
 
   async componentDidMount() {
     this.initOSMD();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     this.initOSMD();
   }
 
@@ -49,7 +49,6 @@ class App extends Component {
     this.setState(state => state.file = file);
     this.osmd = this.divRef.current.osmd;
     this.currentBox = 1;
-    // renderBoundingBoxes([0], this.selectColor, this.osmd.);
     this.measureList = this.osmd.graphic.measureList;
   }
 
@@ -95,11 +94,10 @@ class App extends Component {
       this.currentBox = 1;
       cleanAllBoxes();
       this.color = this.selectColor;
-      // let highlightedBoxes = initLocalStorageToNone(lastMeasureNumber);
-      // window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
+      window.localStorage.setItem(this.state.file, JSON.stringify( this.highlightedBoxes));
     }
     else if (event.code === "Backspace"){
-      cleanBox(this.currentBox);
+      cleanBox(this.currentBox, this.state.file);
       if (this.currentBox > 1){
         cleanSelectBoxes();
         this.currentBox -= 1;
@@ -138,9 +136,6 @@ class App extends Component {
     }
   }
 }
-
-
-
   render() {
     return (
       <div className="App" onKeyPress={(e) => this.handleKeyPress(e)}>

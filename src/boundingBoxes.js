@@ -2,11 +2,9 @@ import { convertUnitsToPixels, checkAvailability, colorToDifficulty } from "./ut
 
 
 export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) => {
-  // let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
   for (const measure of thisMeasureList) {
     let measureNumber =  measure[0].MeasureNumber
-    // console.log("MEASURE NUMBER", measureNumber);  // entra al loop
-    // console.log(checkAvailability(numList, measureNumber)); // retorna FALSO 
     if (checkAvailability(numList, measureNumber)) {  // el problema no es renderizart la bounding box, el problema es que todos los checkAvailability dan falso 
       for (let staff = 0; staff < measure.length; staff++) {
         const positionAndShape = measure[staff].PositionAndShape;
@@ -59,12 +57,12 @@ export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) 
           
         } else {
           console.log(".");
-          //highlightedBoxes[measureNumber] = colorToDifficulty[color];
+          highlightedBoxes[measureNumber] = colorToDifficulty[color];
         }
       }
     }
   }
-  // window.localStorage.setItem(scoreName, JSON.stringify(highlightedBoxes));
+  window.localStorage.setItem(scoreName, JSON.stringify(highlightedBoxes));
 };
 
 export const cleanSelectBoxes = () => {
@@ -90,9 +88,9 @@ export const cleanBox = (boxNumber, scoreName) => {
   boxes.forEach((box) => {
     box.remove();
   });}
-  // let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
-  // highlightedBoxes[boxNumber] = "None";
-  // window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
+  highlightedBoxes[boxNumber] = "None";
+  window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
 };
 
 export function initLocalStorageToNone(totalBoxes, scoreName){
@@ -102,34 +100,30 @@ export function initLocalStorageToNone(totalBoxes, scoreName){
     highlightedBoxes[staff] = "None";
   }
   window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
+
   return highlightedBoxes;
 }
 
 export function renderBoxAndContinue(boxNumber, color, measureList, scoreName){
   console.log("BOX NUMBER", boxNumber, "COLOR", color, "MEASURE LIST", measureList, "scorename", scoreName)
   let lastMeasureNumber = measureList[measureList.length - 1][0].MeasureNumber;
-  // let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
+  console.log("RENDER BOXES AND CONTINUE HIGHLIGHTED BOXES", highlightedBoxes);
   console.log("LAST MEASURE NUMBER:", lastMeasureNumber);
   if (color === "#b7bbbd") {
     boxNumber -= 1;
   }
   cleanSelectBoxes();
-  console.log("CLEANED SELECT BOXES");
-  //if (highlightedBoxes[boxNumber] !== colorToDifficulty[color]){
-  if (true){  
+  if (highlightedBoxes[boxNumber] !== colorToDifficulty[color]){
     cleanBox(boxNumber, scoreName);
-    console.log("CLEANED BOX NUMBER", boxNumber)
     renderBoundingBoxes([boxNumber], color, measureList, scoreName);
 
   }
   if (boxNumber < lastMeasureNumber){
     boxNumber += 1;
-    console.log("BOX NUMBER < LAST MEASURE NUMBER");
   } else {
     boxNumber = lastMeasureNumber;
-    console.log("BOX NUMBER = LAST MEASURE NUMBER");
   }
-  console.log("BOX NUMBER:", boxNumber);
   color = "#b7bbbd"
   renderBoundingBoxes([boxNumber], color, measureList, scoreName)
   return boxNumber;
