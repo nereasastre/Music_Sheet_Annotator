@@ -22,3 +22,5 @@ export function mousePosition(event) {
 
 export let keyToColor = {"1": "#33FF42", "2": "#FFBE33", "3": "#FF4633"};
 export let colorToDifficulty = {"#33FF42": "easy", "#FFBE33": "medium", "#FF4633": "hard"};
+export let difficultyToColor = {"easy": "#33FF42", "medium": "#FFBE33", "hard": "#FF4633"};
+

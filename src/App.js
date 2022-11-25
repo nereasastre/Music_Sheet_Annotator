@@ -8,7 +8,8 @@ import {
   cleanBox,
   cleanAllBoxes,
   initLocalStorageToNone,
-  renderBoxAndContinue
+  renderBoxAndContinue,
+  renderBoxesFromLocalStorage
 } from "./boundingBoxes";
 import { colorToDifficulty, keyToColor, mousePosition } from "./utils";
 
@@ -30,9 +31,16 @@ class App extends Component {
     console.log("OSMD:", this.osmd);
     await new Promise(r => setTimeout(r, 2000)); // wait for osmd to load
     this.measureList = this.osmd.graphic.measureList
-    this.currentBox = 1;
     this.lastMeasureNumber = this.measureList[this.measureList.length - 1][0].MeasureNumber;
-    this.highlightedBoxes = initLocalStorageToNone(this.lastMeasureNumber, this.state.file);
+    this.firstMeasureNumber = this.measureList[0][0].MeasureNumber;
+    this.currentBox = this.firstMeasureNumber;
+
+    this.highlightedBoxes = JSON.parse(window.localStorage.getItem(this.state.file));
+    if (!this.highlightedBoxes){
+      this.highlightedBoxes = initLocalStorageToNone(this.lastMeasureNumber, this.state.file);
+    }
+    this.currentBox = renderBoxesFromLocalStorage(this.measureList, this.state.file);
+    renderBoundingBoxes([this.currentBox], this.selectColor, this.measureList, this.state.file);
   }
 
   async componentDidMount() {
@@ -44,7 +52,6 @@ class App extends Component {
   }
 
   handleClick(event) {
-    this.currentBox = 1;
     const file = event.target.value;
     this.setState(state => state.file = file);
     this.osmd = this.divRef.current.osmd;

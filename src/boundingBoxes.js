@@ -1,4 +1,4 @@
-import { convertUnitsToPixels, checkAvailability, colorToDifficulty } from "./utils";
+import { convertUnitsToPixels, checkAvailability, colorToDifficulty, difficultyToColor } from "./utils";
 
 
 export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) => {
@@ -56,7 +56,6 @@ export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) 
           boundingBoxMiddle.classList.add("erasableBoundingBox");
           
         } else {
-          console.log(".");
           highlightedBoxes[measureNumber] = colorToDifficulty[color];
         }
       }
@@ -72,6 +71,25 @@ export const cleanSelectBoxes = () => {
   });
  
 };
+
+export const renderBoxesFromLocalStorage = (measureList, scoreName) => {
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
+  let lastMeasureNumber = measureList[measureList.length - 1][0].MeasureNumber;
+  var coloredBoxes = [];
+
+  for (let measure = 0; measure <= lastMeasureNumber; measure++) {
+    let measureDifficulty = highlightedBoxes[measure]
+    if (measureDifficulty !== "None"){
+      let measureColor = difficultyToColor[measureDifficulty];
+      renderBoundingBoxes([measure], measureColor, measureList, scoreName);
+      coloredBoxes.push(measure);
+    }
+  } console.log(coloredBoxes);
+  return coloredBoxes[coloredBoxes.length - 2] + 1;
+
+
+
+}
 
 export const cleanAllBoxes = () => {
   const boxes = document.querySelectorAll(".boundingBox");
@@ -105,11 +123,8 @@ export function initLocalStorageToNone(totalBoxes, scoreName){
 }
 
 export function renderBoxAndContinue(boxNumber, color, measureList, scoreName){
-  console.log("BOX NUMBER", boxNumber, "COLOR", color, "MEASURE LIST", measureList, "scorename", scoreName)
   let lastMeasureNumber = measureList[measureList.length - 1][0].MeasureNumber;
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
-  console.log("RENDER BOXES AND CONTINUE HIGHLIGHTED BOXES", highlightedBoxes);
-  console.log("LAST MEASURE NUMBER:", lastMeasureNumber);
   if (color === "#b7bbbd") {
     boxNumber -= 1;
   }
