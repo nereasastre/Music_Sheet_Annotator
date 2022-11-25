@@ -6,6 +6,7 @@ export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) 
   for (const measure of thisMeasureList) {
     let measureNumber =  measure[0].MeasureNumber
     if (checkAvailability(numList, measureNumber)) {  // el problema no es renderizart la bounding box, el problema es que todos los checkAvailability dan falso 
+      
       for (let staff = 0; staff < measure.length; staff++) {
         const positionAndShape = measure[staff].PositionAndShape;
         const positionAndShape1 = measure[1].PositionAndShape;
@@ -78,14 +79,18 @@ export const renderBoxesFromLocalStorage = (measureList, scoreName) => {
   var coloredBoxes = [];
 
   for (let measure = 0; measure <= lastMeasureNumber; measure++) {
-    let measureDifficulty = highlightedBoxes[measure]
-    if (measureDifficulty !== "None"){
+    let measureDifficulty = highlightedBoxes[measure];
+    if (measureDifficulty && measureDifficulty !== "None"){
       let measureColor = difficultyToColor[measureDifficulty];
       renderBoundingBoxes([measure], measureColor, measureList, scoreName);
       coloredBoxes.push(measure);
     }
   } console.log(coloredBoxes);
-  return coloredBoxes[coloredBoxes.length - 2] + 1;
+  if (coloredBoxes.length === 0){
+    return 0
+  }
+  console.log("COLORED BOXES FOR NEXT BOX: ", coloredBoxes[coloredBoxes.length - 1] + 1);
+  return coloredBoxes[coloredBoxes.length - 1] + 1;
 
 
 
@@ -123,6 +128,7 @@ export function initLocalStorageToNone(totalBoxes, scoreName){
 }
 
 export function renderBoxAndContinue(boxNumber, color, measureList, scoreName){
+  console.log("BOX NUMBER", boxNumber, "COLOR", color, "MEASURE LIST ", measureList, "SCORE NAME", scoreName)
   let lastMeasureNumber = measureList[measureList.length - 1][0].MeasureNumber;
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
   if (color === "#b7bbbd") {

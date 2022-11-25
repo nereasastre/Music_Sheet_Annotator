@@ -39,6 +39,7 @@ class App extends Component {
     if (!this.highlightedBoxes){
       this.highlightedBoxes = initLocalStorageToNone(this.lastMeasureNumber, this.state.file);
     }
+
     this.currentBox = renderBoxesFromLocalStorage(this.measureList, this.state.file);
     renderBoundingBoxes([this.currentBox], this.selectColor, this.measureList, this.state.file);
   }
