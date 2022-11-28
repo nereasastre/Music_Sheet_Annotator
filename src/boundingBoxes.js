@@ -89,7 +89,6 @@ export const renderBoxesFromLocalStorage = (measureList, scoreName) => {
   if (coloredBoxes.length === 0){
     return 0
   }
-  console.log("COLORED BOXES FOR NEXT BOX: ", coloredBoxes[coloredBoxes.length - 1] + 1);
   return coloredBoxes[coloredBoxes.length - 1] + 1;
 
 
@@ -106,7 +105,6 @@ export const cleanAllBoxes = () => {
 
 export const cleanBox = (boxNumber, scoreName) => {
   const boxes = document.querySelectorAll(".box".concat(boxNumber.toString()));
-  console.log(boxes);
   if (boxes.length > 0){
   boxes.forEach((box) => {
     box.remove();
@@ -128,7 +126,6 @@ export function initLocalStorageToNone(totalBoxes, scoreName){
 }
 
 export function renderBoxAndContinue(boxNumber, color, measureList, scoreName){
-  console.log("BOX NUMBER", boxNumber, "COLOR", color, "MEASURE LIST ", measureList, "SCORE NAME", scoreName)
   let lastMeasureNumber = measureList[measureList.length - 1][0].MeasureNumber;
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
   if (color === "#b7bbbd") {

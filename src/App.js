@@ -24,13 +24,16 @@ class App extends Component {
     this.hideBoundingBoxes = false;
     console.log("APP;", this);
     document.addEventListener("keydown", (event) => this.handleKeyDown(event));
+    document.addEventListener("mousedown", (event) => this.handleMouseDown(event));
+    window.addEventListener("resize", () => this.resize());
+
   }
 
   async initOSMD(){
     this.osmd = this.divRef.current.osmd;
-    console.log("OSMD:", this.osmd);
     await new Promise(r => setTimeout(r, 2000)); // wait for osmd to load
-    this.measureList = this.osmd.graphic.measureList
+    // this.measureList = this.osmd.graphic.measureList;
+    this.measureList = this.osmd.GraphicSheet.measureList;
     this.lastMeasureNumber = this.measureList[this.measureList.length - 1][0].MeasureNumber;
     this.firstMeasureNumber = this.measureList[0][0].MeasureNumber;
     this.currentBox = this.firstMeasureNumber;
@@ -42,6 +45,7 @@ class App extends Component {
 
     this.currentBox = renderBoxesFromLocalStorage(this.measureList, this.state.file);
     renderBoundingBoxes([this.currentBox], this.selectColor, this.measureList, this.state.file);
+
   }
 
   async componentDidMount() {
@@ -52,13 +56,72 @@ class App extends Component {
     this.initOSMD();
   }
 
+  resize(){
+    if (this.measureList){
+      cleanAllBoxes();
+      renderBoxesFromLocalStorage(this.measureList, this.state.file);
+    }
+  }
+
+
+
   handleClick(event) {
     const file = event.target.value;
     this.setState(state => state.file = file);
     this.osmd = this.divRef.current.osmd;
-    this.currentBox = 1;
+    this.currentBox = this.firstMeasureNumber;
     this.measureList = this.osmd.graphic.measureList;
   }
+
+  handleMouseDown(eventDown){
+    if (!eventDown.shiftKey || this.color === "#b7bbbd"){
+      return
+    }
+    cleanSelectBoxes();
+    console.log("THIS OSMD: ", this.osmd.GraphicSheet); 
+
+    //let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName) as string);
+    let initPos = mousePosition(eventDown);
+    console.log("INIT POS", initPos);
+    const maxDist = {x: 5, y: 5};
+
+    let initNearestNote = this.osmd.graphic.GetNearestNote(initPos, maxDist);
+    console.log(initNearestNote);
+    let initMeasure = initNearestNote.sourceNote.SourceMeasure.MeasureNumber;
+    console.log(initNearestNote);
+
+    onmouseup = (eventUp) => {
+      if (this.color === "#b7bbbd" || !eventUp.shiftKey) {
+        return
+      }
+
+      let finalPos = mousePosition(eventUp);
+      // let finalNearestNote = musicSheet.GraphicSheet.GetNearestNote(
+      let finalNearestNote = this.osmd.GraphicSheet.GetNearestNote(finalPos, maxDist);
+      
+      let finalMeasure = finalNearestNote.sourceNote.SourceMeasure.MeasureNumber;
+
+      if (finalMeasure < initMeasure) {  // if selection is from right to left, swap init and final
+        const previousFinalMeasure = finalMeasure;
+        finalMeasure = initMeasure;
+        initMeasure = previousFinalMeasure;
+      }
+      this.currentBox = finalMeasure;
+      for (let measure = initMeasure; measure < finalMeasure + 1; measure++) {
+        console.log("peta")
+        if (this.highlightedBoxes[measure] !== colorToDifficulty[this.color]) {
+          console.log("peta2");
+          cleanBox(measure, this.state.file);
+          renderBoundingBoxes([measure], this.color, this.measureList, this.state.file);            
+        }
+      }
+      
+      this.currentBox += 1;
+
+      renderBoundingBoxes([this.currentBox], this.selectColor, this.measureList, this.state.file);
+    };
+  } 
+  
 
   selectPreviousBox() {
     this.color = this.selectColor;
@@ -112,7 +175,7 @@ class App extends Component {
       } else {
         this.currentBox = 1;
       }
-      renderBoundingBoxes([this.currentBox], this.selectColor, this.measureList, this.state.file);
+      renderBoundingBoxes([this.currentBox], this.selectColor, this.measureList, this.state.file); // render select box
   }
   else if (event.code === "Digit1" || event.code === "Numpad1"){
     this.color = keyToColor["1"];

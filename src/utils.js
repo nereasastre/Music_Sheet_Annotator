@@ -15,8 +15,8 @@ export function mousePosition1(event) {
 
 export function mousePosition(event) {
   const units = 10;
-  const xpos = event.pageX / units;
-  const ypos = (event.pageY) / units;
+  const xpos = event.pageX / units; 
+  const ypos = (event.pageY - 200) / units;  // Subtract the pixels corresponding to the page header 
   return new PointF2D(xpos, ypos);
 }
 

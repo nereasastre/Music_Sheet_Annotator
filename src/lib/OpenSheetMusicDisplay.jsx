@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { OpenSheetMusicDisplay as OSMD } from 'opensheetmusicdisplay';
+import { renderBoxesFromLocalStorage } from '../boundingBoxes';
 
 class OpenSheetMusicDisplay extends Component {
     constructor(props) {
@@ -20,10 +21,13 @@ class OpenSheetMusicDisplay extends Component {
   
     resize() {
       this.forceUpdate();
+      console.log("THIS PROPS FILE", this.props.file);
+      renderBoxesFromLocalStorage(this.osmd.GraphicSheet.MeasureList, this.props.file);
     }
   
     componentWillUnmount() {
-      window.removeEventListener('resize', this.resize)
+      window.removeEventListener('resize', this.resize);
+
     }
   
     componentDidUpdate(prevProps) {
@@ -32,7 +36,7 @@ class OpenSheetMusicDisplay extends Component {
       } else {
         this.osmd.load(this.props.file).then(() => this.osmd.render());
       }
-      window.addEventListener('resize', this.resize)
+      window.addEventListener('resize', this.resize);
     }
   
     // Called after render
