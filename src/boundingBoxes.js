@@ -1,13 +1,12 @@
-import { convertUnitsToPixels, checkAvailability, colorToDifficulty } from "./utils";
-import { musicSheet, currentBox, scoreName } from "./index";
+import { convertUnitsToPixels, checkAvailability, colorToDifficulty, difficultyToColor } from "./utils";
 
-export const renderBoundingBoxes = (numList, color) => {
-  let thisMeasureList = musicSheet.GraphicSheet.MeasureList;
+
+export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) => {
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
-
   for (const measure of thisMeasureList) {
     let measureNumber =  measure[0].MeasureNumber
-    if (checkAvailability(numList, measureNumber)) {
+    if (checkAvailability(numList, measureNumber)) {  // el problema no es renderizart la bounding box, el problema es que todos los checkAvailability dan falso 
+      
       for (let staff = 0; staff < measure.length; staff++) {
         const positionAndShape = measure[staff].PositionAndShape;
         const positionAndShape1 = measure[1].PositionAndShape;
@@ -74,6 +73,28 @@ export const cleanSelectBoxes = () => {
  
 };
 
+export const renderBoxesFromLocalStorage = (measureList, scoreName) => {
+  let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
+  let lastMeasureNumber = measureList[measureList.length - 1][0].MeasureNumber;
+  var coloredBoxes = [];
+
+  for (let measure = 0; measure <= lastMeasureNumber; measure++) {
+    let measureDifficulty = highlightedBoxes[measure];
+    if (measureDifficulty && measureDifficulty !== "None"){
+      let measureColor = difficultyToColor[measureDifficulty];
+      renderBoundingBoxes([measure], measureColor, measureList, scoreName);
+      coloredBoxes.push(measure);
+    }
+  } console.log(coloredBoxes);
+  if (coloredBoxes.length === 0){
+    return 0
+  }
+  return coloredBoxes[coloredBoxes.length - 1] + 1;
+
+
+
+}
+
 export const cleanAllBoxes = () => {
   const boxes = document.querySelectorAll(".boundingBox");
   boxes.forEach((box) => {
@@ -82,36 +103,38 @@ export const cleanAllBoxes = () => {
 
 };
 
-export const cleanBox = (boxNumber) => {
+export const cleanBox = (boxNumber, scoreName) => {
   const boxes = document.querySelectorAll(".box".concat(boxNumber.toString()));
-  console.log(boxes);
+  if (boxes.length > 0){
   boxes.forEach((box) => {
     box.remove();
-  });
+  });}
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
   highlightedBoxes[boxNumber] = "None";
   window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
 };
 
-export function initLocalStorageToNone(totalBoxes){
+export function initLocalStorageToNone(totalBoxes, scoreName){
   let highlightedBoxes = {};
 
   for (let staff = 0; staff < totalBoxes; staff++) {
     highlightedBoxes[staff] = "None";
   }
   window.localStorage.setItem(scoreName, JSON.stringify( highlightedBoxes));
+
   return highlightedBoxes;
 }
 
-export function renderBoxAndContinue(boxNumber, color, lastMeasureNumber){
+export function renderBoxAndContinue(boxNumber, color, measureList, scoreName){
+  let lastMeasureNumber = measureList[measureList.length - 1][0].MeasureNumber;
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
   if (color === "#b7bbbd") {
     boxNumber -= 1;
   }
   cleanSelectBoxes();
-  if (highlightedBoxes[boxNumber] != colorToDifficulty[color]){
-    cleanBox(boxNumber);
-    renderBoundingBoxes([boxNumber], color);
+  if (highlightedBoxes[boxNumber] !== colorToDifficulty[color]){
+    cleanBox(boxNumber, scoreName);
+    renderBoundingBoxes([boxNumber], color, measureList, scoreName);
 
   }
   if (boxNumber < lastMeasureNumber){
@@ -120,6 +143,6 @@ export function renderBoxAndContinue(boxNumber, color, lastMeasureNumber){
     boxNumber = lastMeasureNumber;
   }
   color = "#b7bbbd"
-  renderBoundingBoxes([boxNumber], color)
+  renderBoundingBoxes([boxNumber], color, measureList, scoreName)
   return boxNumber;
 }
