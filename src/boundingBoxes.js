@@ -85,9 +85,10 @@ export const renderBoxesFromLocalStorage = (measureList, scoreName) => {
       renderBoundingBoxes([measure], measureColor, measureList, scoreName);
       coloredBoxes.push(measure);
     }
-  } console.log(coloredBoxes);
+  } 
   if (coloredBoxes.length === 0){
-    return 0
+    return measureList[0][0].MeasureNumber;
+
   }
   return coloredBoxes[coloredBoxes.length - 1] + 1;
 
