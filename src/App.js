@@ -162,11 +162,11 @@ class App extends Component {
     }
     else if (event.code === "Backspace"){
       cleanBox(this.currentBox, this.state.file);
-      if (this.currentBox > 1){
+      if (this.currentBox > this.firstMeasureNumber){
         cleanSelectBoxes();
         this.currentBox -= 1;
       } else {
-        this.currentBox = 1;
+        this.currentBox = this.firstMeasureNumber;
       }
       renderBoundingBoxes([this.currentBox], this.selectColor, this.measureList, this.state.file); // render select box
   }
