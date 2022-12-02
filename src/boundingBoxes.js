@@ -1,4 +1,4 @@
-import { convertUnitsToPixels, checkAvailability, colorToDifficulty, difficultyToColor } from "./utils";
+import { convertUnitsToPixels, checkAvailability, colorToDifficulty, difficultyToColor, max } from "./utils";
 
 
 export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) => {
@@ -17,11 +17,11 @@ export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) 
         const x = convertUnitsToPixels(positionAndShape.AbsolutePosition.x);
         const yNew = convertUnitsToPixels(positionAndShape.AbsolutePosition.y);
         const y1 = yNew + height;
-        const height1 = convertUnitsToPixels(
+        const height1 = max(convertUnitsToPixels(
           positionAndShape1.AbsolutePosition.y -
             positionAndShape.AbsolutePosition.y -
             4
-        );
+        ), 0);
 
         const boundingBox = document.createElementNS(
           "http://www.w3.org/2000/svg",
