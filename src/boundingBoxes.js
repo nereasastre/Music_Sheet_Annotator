@@ -5,8 +5,7 @@ export const renderBoundingBoxes = (numList, color, thisMeasureList, scoreName) 
   let highlightedBoxes = JSON.parse(window.localStorage.getItem(scoreName));
   for (const measure of thisMeasureList) {
     let measureNumber =  measure[0].MeasureNumber
-    if (checkAvailability(numList, measureNumber)) {  // el problema no es renderizart la bounding box, el problema es que todos los checkAvailability dan falso 
-      
+    if (checkAvailability(numList, measureNumber)) {
       for (let staff = 0; staff < measure.length; staff++) {
         const positionAndShape = measure[staff].PositionAndShape;
         const positionAndShape1 = measure[1].PositionAndShape;

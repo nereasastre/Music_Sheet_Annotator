@@ -24,7 +24,6 @@ class App extends Component {
     this.hideBoundingBoxes = false;
     document.addEventListener("keydown", (event) => this.handleKeyDown(event));
     document.addEventListener("mousedown", (event) => this.handleMouseDown(event));
-    // window.addEventListener("resize", () => this.resize());
 
   }
 
@@ -44,22 +43,32 @@ class App extends Component {
     this.currentBox = renderBoxesFromLocalStorage(this.measureList, this.state.file);
     renderBoundingBoxes([this.currentBox], this.selectColor, this.measureList, this.state.file);
 
-  }
+    // re-render in case of resize
+    let measureList  = this.measureList;
+    let scoreName = this.state.file;
+    let currentBox = this.currentBox;
+    let selectColor = this.selectColor;
+
+    window.onresize = async function(){
+      await new Promise(r => setTimeout(r, 2000)); // wait for osmd to load
+      cleanAllBoxes();
+      renderBoxesFromLocalStorage(measureList, scoreName)
+      renderBoundingBoxes([currentBox], selectColor, measureList,scoreName);
+
+    };
+};
 
   async componentDidMount() {
     this.initOSMD();
+    console.log("mounted!!!")
   }
 
   componentDidUpdate() {
     this.initOSMD();
+    console.log("update!!");
   }
 
-  resize(){
-    if (this.measureList){
-      cleanAllBoxes();
-      renderBoxesFromLocalStorage(this.measureList, this.state.file);
-    }
-  }
+
 
   handleClick(event) {
     const file = event.target.value;
